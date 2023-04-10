@@ -1,0 +1,36 @@
+version: '3'
+services:
+  db:
+    hostname: "${POSTGRES_HOST}"
+    image: postgres:14.5-bullseye
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    restart: on-failure
+  be:
+    image: node:18.14.2-slim
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+    command: >      
+      bash -c "npm run build && npm run start:prod"
+    working_dir: '/app'
+    restart: on-failure
+    volumes:
+      - './:/app'
+  # ipfs:
+  #   image: ipfs/kubo:latest
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ${IPFS_STAGING}:/export
+  #     - ${IPFS_DATA}:/data/ipfs
+  #   ports:
+  #     - "${P2P_PORT}:4001"
+  #     - "${P2P_PORT}:4001/udp"
+  #     - "${RPC_API}:8080"
+  #     - "${GATEWAY_PORT}:5001"
