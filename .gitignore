@@ -34,4 +34,9 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# Env vars
 .env
+
+# Docker IPFS data
+ipfs-data/staging/*
+ipfs-data/data/*

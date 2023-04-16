@@ -4,6 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './user/users.module';
 import { CommonModule } from './common/common.module';
+import { IpfsModule } from './ipfs/ipfs.module';
+import { FileModule } from './file/file.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -14,6 +16,8 @@ import { CommonModule } from './common/common.module';
     UsersModule,
     AuthModule,
     CommonModule,
+    IpfsModule,
+    FileModule,
   ],
 })
 export class AppModule {}
