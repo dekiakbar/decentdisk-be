@@ -19,9 +19,8 @@ import { RoleEnum } from 'src/user/enum/role.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ApiPaginatedResponse } from 'src/common/decorator/api-paginated-response.decoratos';
 import { FileResponseDto } from '../dto/file-response.dto';
-import { ApiFileResponse } from '../decorator/api-file-response';
 import { FileMineResponseDto } from '../dto/file-mine-response.dto';
-
+import { ApiSuccessResponse } from 'src/common/decorator/api-success-response';
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('File')
 @ApiBearerAuth('Bearer')
@@ -29,6 +28,7 @@ import { FileMineResponseDto } from '../dto/file-mine-response.dto';
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
+  @ApiSuccessResponse(FileResponseDto, 'Successfully upload file')
   @Post()
   @UseInterceptors(FilesInterceptor('files'))
   async upload(
@@ -45,7 +45,13 @@ export class FileController {
     return this.fileService.findAll(pageOptionsDto);
   }
 
-  @ApiFileResponse(FileResponseDto)
+  @ApiPaginatedResponse(FileMineResponseDto)
+  @Get('mine')
+  mine(@Query() pageOptionsDto: PageOptionsDto, @Request() request) {
+    return this.fileService.findAll(pageOptionsDto, request.user.id);
+  }
+
+  @ApiSuccessResponse(FileResponseDto, 'Successfully received file detail')
   @Roles(RoleEnum.ADMIN)
   @Get(':id')
   detail(@Param('id') id: string) {
@@ -57,16 +63,7 @@ export class FileController {
     return this.fileService.remove(+id);
   }
 
-  /**
-   * Below code is for logged in user
-   */
-  @ApiPaginatedResponse(FileMineResponseDto)
-  @Get('mine')
-  mine(@Query() pageOptionsDto: PageOptionsDto, @Request() request) {
-    return this.fileService.findAll(pageOptionsDto, request.user.id);
-  }
-
-  @ApiFileResponse(FileMineResponseDto)
+  @ApiSuccessResponse(FileMineResponseDto, 'Successfully received file detail')
   @Get('mine/:id')
   mineDetail(@Param('id') id: string, @Request() request) {
     return this.fileService.mineDetail(+id, request.user.id);

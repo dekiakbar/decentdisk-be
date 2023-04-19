@@ -6,7 +6,9 @@ services:
     env_file:
       - .env
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
     restart: on-failure
   be:
     image: node:18.14.2-slim

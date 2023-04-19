@@ -37,6 +37,5 @@ lerna-debug.log*
 # Env vars
 .env
 
-# Docker IPFS data
-ipfs-data/staging/*
-ipfs-data/data/*
+# Docker data
+data

@@ -13,7 +13,7 @@ import { UsersService } from 'src/user/service/users.service';
 import { UserResponseDto } from 'src/user/dto/user/user-response.dto';
 import { SignInResponseDto } from '../dto/sign-in-response.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ApiUserResponse } from 'src/user/decorator/api-user-response.decorator';
+import { ApiSuccessResponse } from 'src/common/decorator/api-success-response';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -28,7 +28,7 @@ export class AuthController {
     return this.authService.signIn(signInDto);
   }
 
-  @ApiUserResponse()
+  @ApiSuccessResponse(UserResponseDto, 'Successfully received user data')
   @ApiBearerAuth('Bearer')
   @UseGuards(AuthGuard('jwt'))
   @Get('/me')

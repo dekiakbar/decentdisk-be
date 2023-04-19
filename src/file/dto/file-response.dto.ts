@@ -7,8 +7,12 @@ export class FileResponseDto extends FileMineResponseDto {
   @ApiProperty()
   user: UsersModel;
 
+  @ApiProperty()
+  cid: string;
+
   constructor(file: FileModel) {
     super(file);
     this.user = file.user;
+    this.cid = file.cid;
   }
 }

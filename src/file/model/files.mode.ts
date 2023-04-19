@@ -21,6 +21,9 @@ export class FileModel extends Model {
   cid: string;
 
   @Column
+  internalCid: string;
+
+  @Column
   name: string;
 
   @Column

@@ -14,6 +14,7 @@ import { PageMetaDto } from 'src/common/dto/page-meta-dto';
 import { FileMineResponseDto } from '../dto/file-mine-response.dto';
 import { FindOptions } from 'sequelize';
 import { FileResponseDto } from '../dto/file-response.dto';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class FileService {
   constructor(
@@ -21,6 +22,7 @@ export class FileService {
     private fileModel: typeof FileModel,
     private ipfsService: IpfsService,
     private userService: UsersService,
+    private configService: ConfigService,
   ) {}
 
   async upload(
@@ -41,6 +43,7 @@ export class FileService {
     const userFiles = await Promise.all(
       ipfsFiles.map(async (file) => {
         file.userId = user.id;
+        file.internalCid = this.generateInternalCid();
         return file;
       }),
     );
@@ -138,5 +141,20 @@ export class FileService {
     if (result) {
       await file.destroy();
     }
+  }
+
+  generateInternalCid(): string {
+    const length = this.configService.get('INTERNAL_CID_LENGTH');
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length),
+      );
+    }
+
+    return result;
   }
 }

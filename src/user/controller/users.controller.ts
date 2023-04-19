@@ -18,7 +18,7 @@ import { UserResponseDto } from '../dto/user/user-response.dto';
 import { ApiPaginatedResponse } from 'src/common/decorator/api-paginated-response.decoratos';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { RoleEnum } from '../enum/role.enum';
-import { ApiUserResponse } from '../decorator/api-user-response.decorator';
+import { ApiSuccessResponse } from 'src/common/decorator/api-success-response';
 @ApiTags('User')
 @ApiBearerAuth('Bearer')
 @UseGuards(AuthGuard('jwt'))
@@ -35,13 +35,13 @@ export class UsersController {
     return this.userService.getUsers(pageOptionsDto);
   }
 
-  @ApiUserResponse()
+  @ApiSuccessResponse(UserResponseDto, 'Successfully received user data')
   @Get(':id')
   getDetail(@Param('id') id: string): Promise<UserResponseDto> {
     return this.userService.getDetail(+id);
   }
 
-  @ApiUserResponse()
+  @ApiSuccessResponse(UserResponseDto, 'Successfully update user data')
   @Patch(':id')
   update(
     @Param('id') id: string,

@@ -9,7 +9,7 @@ export class FileMineResponseDto {
   userId: number;
 
   @ApiProperty()
-  cid: string;
+  internalCid: string;
 
   @ApiProperty()
   name: string;
@@ -29,7 +29,7 @@ export class FileMineResponseDto {
   constructor(file: FileModel) {
     this.id = file.id;
     this.userId = file.userId;
-    this.cid = file.cid;
+    this.internalCid = file.internalCid;
     this.name = file.name;
     this.size = file.size;
     this.mimeType = file.mimeType;

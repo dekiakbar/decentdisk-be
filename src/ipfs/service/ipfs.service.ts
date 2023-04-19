@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CID, IPFSHTTPClient } from 'ipfs-http-client';
 import { IpfsAddResultDto } from '../dto/ipfs-add-result.dto';
 @Injectable()
@@ -6,6 +6,10 @@ export class IpfsService {
   constructor(@Inject('IPFS') private ipfs: IPFSHTTPClient) {}
 
   async addAll(files: Array<Express.Multer.File>): Promise<IpfsAddResultDto[]> {
+    if (!files) {
+      throw new BadRequestException("File can't be empty.");
+    }
+
     const result = await Promise.all(
       files.map(async (file): Promise<IpfsAddResultDto> => {
         /**
