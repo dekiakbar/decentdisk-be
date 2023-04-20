@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { FileMineResponseDto } from './file-mine-response.dto';
 import { UsersModel } from 'src/user/model/users.model';
-import { FileModel } from '../model/files.mode';
+import { FileModel } from '../model/files.model';
 
 export class FileResponseDto extends FileMineResponseDto {
   @ApiProperty()

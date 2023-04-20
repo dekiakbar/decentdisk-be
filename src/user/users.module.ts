@@ -3,7 +3,7 @@ import { DatabaseModule } from 'src/database/database.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersService } from './service/users.service';
 import { UsersModel } from './model/users.model';
-import { UsersController } from './controller/users.controller';
+import { UsersController } from './controller/admin/users.controller';
 import { RolesModel } from './model/roles.model';
 import { RolesService } from './service/roles.service';
 import { UserRoleModel } from './model/userRole.model';

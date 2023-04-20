@@ -40,4 +40,15 @@ export class IpfsService {
     const result = await this.ipfs.pin.rm(cid);
     return result;
   }
+
+  async get(cid: string): Promise<Buffer> {
+    const dataStream = this.ipfs.cat(cid);
+    const chunks = [];
+    for await (const chunk of dataStream) {
+      chunks.push(chunk);
+    }
+    const buffer = Buffer.concat(chunks);
+
+    return buffer;
+  }
 }

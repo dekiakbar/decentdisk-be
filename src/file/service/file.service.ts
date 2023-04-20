@@ -2,9 +2,10 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { IpfsService } from 'src/ipfs/service/ipfs.service';
-import { FileModel } from '../model/files.mode';
+import { FileModel } from '../model/files.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { UsersModel } from 'src/user/model/users.model';
 import { UsersService } from 'src/user/service/users.service';
@@ -15,6 +16,7 @@ import { FileMineResponseDto } from '../dto/file-mine-response.dto';
 import { FindOptions } from 'sequelize';
 import { FileResponseDto } from '../dto/file-response.dto';
 import { ConfigService } from '@nestjs/config';
+import { FileViewResponseDto } from '../dto/file-view-response.dto';
 @Injectable()
 export class FileService {
   constructor(
@@ -83,6 +85,10 @@ export class FileService {
   }
 
   async findOne(id: number, userId: number = null): Promise<FileModel> {
+    if (!id) {
+      throw new BadRequestException("Id can't be empty");
+    }
+
     const query: FindOptions = {
       where: {
         id: id,
@@ -108,6 +114,39 @@ export class FileService {
     return file;
   }
 
+  async findOneByInternalCid(
+    internalCid: string,
+    userId: number = null,
+  ): Promise<FileModel> {
+    if (!internalCid) {
+      throw new BadRequestException("InternalCid can't be empty");
+    }
+
+    const query: FindOptions = {
+      where: {
+        internalCid: internalCid,
+      },
+      include: {
+        model: UsersModel,
+      },
+    };
+
+    if (userId) {
+      query.where = {
+        internalCid: internalCid,
+        userId: userId,
+      };
+    }
+
+    const file = await this.fileModel.findOne(query);
+
+    if (!file) {
+      throw new NotFoundException('File is not exist');
+    }
+
+    return file;
+  }
+
   async detail(id: number): Promise<FileResponseDto> {
     const file = await this.findOne(id);
     return new FileResponseDto(file);
@@ -115,7 +154,7 @@ export class FileService {
 
   async mineDetail(id: number, userId: number): Promise<FileMineResponseDto> {
     if (!userId) {
-      throw new BadRequestException('you are not authorized.');
+      throw new UnauthorizedException('You are not authorized.');
     }
 
     const file = await this.findOne(id, userId);
@@ -133,7 +172,7 @@ export class FileService {
 
   async mineRemove(id: number, userId: number): Promise<any> {
     if (!userId) {
-      throw new BadRequestException('you are not authorized.');
+      throw new UnauthorizedException('You are not authorized.');
     }
 
     const file = await this.findOne(id, userId);
@@ -156,5 +195,28 @@ export class FileService {
     }
 
     return result;
+  }
+
+  async stream(internalCid: string): Promise<FileViewResponseDto> {
+    const fileData = await this.findOneByInternalCid(internalCid);
+    const fileBuffer = await this.ipfsService.get(fileData.cid);
+    const fileMetaData = new FileViewResponseDto(fileData, fileBuffer);
+
+    return fileMetaData;
+  }
+
+  async mineStream(
+    internalCid: string,
+    userId: number,
+  ): Promise<FileViewResponseDto> {
+    if (!userId) {
+      throw new UnauthorizedException('You are not authorized.');
+    }
+
+    const fileData = await this.findOneByInternalCid(internalCid, userId);
+    const fileBuffer = await this.ipfsService.get(fileData.cid);
+    const fileMetaData = new FileViewResponseDto(fileData, fileBuffer);
+
+    return fileMetaData;
   }
 }

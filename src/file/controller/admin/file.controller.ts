@@ -9,8 +9,9 @@ import {
   UseGuards,
   Request,
   Query,
+  StreamableFile,
+  Res,
 } from '@nestjs/common';
-import { FileService } from '../service/file.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { PageOptionsDto } from 'src/common/dto/page-options.dto';
@@ -18,17 +19,21 @@ import { Roles } from 'src/auth/decorator/roles.decorator';
 import { RoleEnum } from 'src/user/enum/role.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ApiPaginatedResponse } from 'src/common/decorator/api-paginated-response.decoratos';
-import { FileResponseDto } from '../dto/file-response.dto';
-import { FileMineResponseDto } from '../dto/file-mine-response.dto';
+import { FileService } from 'src/file/service/file.service';
+import { FileResponseDto } from 'src/file/dto/file-response.dto';
 import { ApiSuccessResponse } from 'src/common/decorator/api-success-response';
+import { Stream } from 'stream';
+import { Response } from 'express';
+
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('File')
 @ApiBearerAuth('Bearer')
-@Controller('file')
+@Controller('admin/file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @ApiSuccessResponse(FileResponseDto, 'Successfully upload file')
+  @Roles(RoleEnum.ADMIN)
   @Post()
   @UseInterceptors(FilesInterceptor('files'))
   async upload(
@@ -45,12 +50,6 @@ export class FileController {
     return this.fileService.findAll(pageOptionsDto);
   }
 
-  @ApiPaginatedResponse(FileMineResponseDto)
-  @Get('mine')
-  mine(@Query() pageOptionsDto: PageOptionsDto, @Request() request) {
-    return this.fileService.findAll(pageOptionsDto, request.user.id);
-  }
-
   @ApiSuccessResponse(FileResponseDto, 'Successfully received file detail')
   @Roles(RoleEnum.ADMIN)
   @Get(':id')
@@ -58,19 +57,25 @@ export class FileController {
     return this.fileService.detail(+id);
   }
 
+  @Roles(RoleEnum.ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.fileService.remove(+id);
   }
 
-  @ApiSuccessResponse(FileMineResponseDto, 'Successfully received file detail')
-  @Get('mine/:id')
-  mineDetail(@Param('id') id: string, @Request() request) {
-    return this.fileService.mineDetail(+id, request.user.id);
-  }
+  @Get('stream/:internalCid')
+  @Roles(RoleEnum.ADMIN)
+  async stream(
+    @Param('internalCid') internalCid: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
+    const fileMetaData = await this.fileService.stream(internalCid);
+    const file = Stream.Readable.from(fileMetaData.buffer);
 
-  @Delete('mine/:id')
-  mineRemove(@Param('id') id: string, @Request() request) {
-    return this.fileService.mineRemove(+id, request.user.id);
+    res.set({
+      'Content-Type': fileMetaData.mimeType,
+    });
+
+    return new StreamableFile(file);
   }
 }

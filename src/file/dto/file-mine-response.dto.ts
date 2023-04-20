@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FileModel } from '../model/files.mode';
+import { FileModel } from '../model/files.model';
 
 export class FileMineResponseDto {
   @ApiProperty()
