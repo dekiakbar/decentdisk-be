@@ -7,6 +7,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { FileModel } from './model/files.model';
 import { UsersModule } from 'src/user/users.module';
 import { FileController as AdminFileController } from './controller/admin/file.controller';
+import { FileController } from './controller/public/file.controller';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { FileController as AdminFileController } from './controller/admin/file.c
     SequelizeModule.forFeature([FileModel]),
     UsersModule,
   ],
-  controllers: [AdminFileController, UserFileController],
+  controllers: [AdminFileController, UserFileController, FileController],
   providers: [FileService],
 })
 export class FileModule {}
