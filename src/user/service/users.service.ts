@@ -37,19 +37,19 @@ export class UsersService {
   async getUsers(
     pageOptionsDto: PageOptionsDto,
   ): Promise<PageDto<UserResponseDto>> {
-    const users = await this.userModel.findAll({
-      limit: pageOptionsDto.limit,
-      offset: pageOptionsDto.offset,
-      order: [['createdAt', pageOptionsDto.order]],
-      include: [
-        {
-          model: RolesModel,
-          attributes: ['code'],
-        },
-      ],
-    });
+    const { rows: users, count: itemCount } =
+      await this.userModel.findAndCountAll({
+        limit: pageOptionsDto.limit,
+        offset: pageOptionsDto.offset,
+        order: [['createdAt', pageOptionsDto.order]],
+        include: [
+          {
+            model: RolesModel,
+            attributes: ['code'],
+          },
+        ],
+      });
 
-    const itemCount = users.length;
     const pageMetaDto = new PageMetaDto({ pageOptionsDto, itemCount });
 
     const usersObject = users.map((user) => {
