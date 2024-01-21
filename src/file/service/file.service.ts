@@ -71,9 +71,7 @@ export class FileService {
       };
     }
 
-    const files = await this.fileModel.findAll(query);
-
-    const itemCount = files.length;
+    const {rows: files, count: itemCount} = await this.fileModel.findAndCountAll(query);
     const pageMetaDto = new PageMetaDto({ pageOptionsDto, itemCount });
 
     const filesObject = files.map((file) => {
