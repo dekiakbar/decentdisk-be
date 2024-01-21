@@ -42,6 +42,7 @@ export class UsersService {
         limit: pageOptionsDto.limit,
         offset: pageOptionsDto.offset,
         order: [['createdAt', pageOptionsDto.order]],
+        distinct: true,
         include: [
           {
             model: RolesModel,
