@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -71,7 +72,8 @@ export class FileService {
       };
     }
 
-    const {rows: files, count: itemCount} = await this.fileModel.findAndCountAll(query);
+    const { rows: files, count: itemCount } =
+      await this.fileModel.findAndCountAll(query);
     const pageMetaDto = new PageMetaDto({ pageOptionsDto, itemCount });
 
     const filesObject = files.map((file) => {
@@ -161,10 +163,19 @@ export class FileService {
   }
 
   async remove(id: number): Promise<any> {
-    const file = await this.findOne(id);
-    const result = await this.ipfsService.rm(file.cid);
-    if (result) {
+    try {
+      const file = await this.findOne(id);
+      await this.ipfsService.rm(file);
       await file.destroy();
+    } catch (error: unknown) {
+      /**
+       * TODO: handle error
+       */
+      if (typeof error === 'string') {
+        throw new InternalServerErrorException(error);
+      } else if (error instanceof Error) {
+        throw new InternalServerErrorException(error.message);
+      }
     }
   }
 
@@ -174,10 +185,8 @@ export class FileService {
     }
 
     const file = await this.findOne(id, userId);
-    const result = await this.ipfsService.rm(file.cid);
-    if (result) {
-      await file.destroy();
-    }
+    await this.ipfsService.rm(file);
+    await file.destroy();
   }
 
   generateInternalCid(): string {

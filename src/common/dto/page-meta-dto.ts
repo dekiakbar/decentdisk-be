@@ -9,8 +9,14 @@ class DisplayedItem {
   public to: number;
 
   constructor({ pageOptionsDto, itemCount }: PageMetaDtoParameters) {
-    this.from = pageOptionsDto.page == 1 ? 1 : ((pageOptionsDto.page - 1) * pageOptionsDto.limit) + 1;
-    this.to = pageOptionsDto.page == Math.ceil(itemCount / pageOptionsDto.limit) ? itemCount : pageOptionsDto.page * pageOptionsDto.limit;
+    this.from =
+      pageOptionsDto.page == 1
+        ? 1
+        : (pageOptionsDto.page - 1) * pageOptionsDto.limit + 1;
+    this.to =
+      pageOptionsDto.page == Math.ceil(itemCount / pageOptionsDto.limit)
+        ? itemCount
+        : pageOptionsDto.page * pageOptionsDto.limit;
   }
 }
 
