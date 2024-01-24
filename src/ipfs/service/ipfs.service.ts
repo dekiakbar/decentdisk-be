@@ -45,9 +45,12 @@ export class IpfsService {
 
   getRandomChunk(): string {
     const prefix = 'size-';
-    const min = 1;
-    const max = 3000;
-    const size = Math.floor(Math.random() * (max - min + 1)) + min;
+    /**
+     * If min is low, upload speed will slowly
+     */
+    const min = 524288; // default: size-262144
+    const max = 786432;
+    const size = Math.floor(Math.random() * (max - min)) + min;
     return prefix + size.toString();
   }
 
