@@ -17,7 +17,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { PageOptionsDto } from 'src/common/dto/page-options.dto';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { RoleEnum } from 'src/user/enum/role.enum';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiPaginatedResponse } from 'src/common/decorator/api-paginated-response.decoratos';
 import { FileService } from 'src/file/service/file.service';
 import { FileResponseDto } from 'src/file/dto/file-response.dto';
@@ -25,6 +25,8 @@ import { ApiSuccessResponse } from 'src/common/decorator/api-success-response';
 import { Stream } from 'stream';
 import { Response } from 'express';
 
+@ApiResponse({ status: 401, description: 'Unauthorized.' })
+@ApiResponse({ status: 403, description: 'Forbidden.' })
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('File')
 @ApiBearerAuth('Bearer')
@@ -47,7 +49,7 @@ export class FileController {
   @Roles(RoleEnum.ADMIN)
   @Get()
   findAll(@Query() pageOptionsDto: PageOptionsDto) {
-    return this.fileService.findAll(pageOptionsDto);
+    return this.fileService.getFiles(pageOptionsDto);
   }
 
   @ApiSuccessResponse(FileResponseDto, 'Successfully received file detail')

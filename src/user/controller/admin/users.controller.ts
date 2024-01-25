@@ -11,7 +11,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { UseGuards } from '@nestjs/common';
 import { PageDto } from 'src/common/dto/page.dto';
 import { PageOptionsDto } from 'src/common/dto/page-options.dto';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApiPaginatedResponse } from 'src/common/decorator/api-paginated-response.decoratos';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { UpdateUserDto } from 'src/user/dto/user/update-user.dto';
@@ -19,6 +24,9 @@ import { UsersService } from 'src/user/service/users.service';
 import { UserResponseDto } from 'src/user/dto/user/user-response.dto';
 import { RoleEnum } from 'src/user/enum/role.enum';
 import { ApiSuccessResponse } from 'src/common/decorator/api-success-response';
+
+@ApiResponse({ status: 401, description: 'Unauthorized.' })
+@ApiResponse({ status: 403, description: 'Forbidden.' })
 @ApiTags('User')
 @ApiBearerAuth('Bearer')
 @UseGuards(AuthGuard('jwt'))
