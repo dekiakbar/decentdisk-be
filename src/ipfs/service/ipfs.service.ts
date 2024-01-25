@@ -2,6 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { IPFSHTTPClient } from 'ipfs-http-client';
 import { IpfsAddResultDto } from '../dto/ipfs-add-result.dto';
 import { FileModel } from 'src/file/model/files.model';
+import { StatResult } from 'ipfs-core-types/src/repo';
 @Injectable()
 export class IpfsService {
   constructor(@Inject('IPFS') private ipfs: IPFSHTTPClient) {}
@@ -97,5 +98,15 @@ export class IpfsService {
         filename.substring(dotIndex)
       );
     }
+  }
+
+  /**
+   * Get IPFS repo status
+   *
+   * @returns {StatResult}
+   */
+  async getStat(): Promise<StatResult> {
+    const data = await this.ipfs.stats.repo();
+    return data;
   }
 }

@@ -6,6 +6,7 @@ import { UsersModule } from './user/users.module';
 import { CommonModule } from './common/common.module';
 import { IpfsModule } from './ipfs/ipfs.module';
 import { FileModule } from './file/file.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,6 +19,7 @@ import { FileModule } from './file/file.module';
     CommonModule,
     IpfsModule,
     FileModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}
