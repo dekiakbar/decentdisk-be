@@ -44,7 +44,7 @@ export class FileController {
   @ApiPaginatedResponse(FileMineResponseDto)
   @Get()
   mine(@Query() pageOptionsDto: PageOptionsDto, @Request() request) {
-    return this.fileService.findAll(pageOptionsDto, request.user.id);
+    return this.fileService.getFiles(pageOptionsDto, request.user.id);
   }
 
   @ApiSuccessResponse(FileMineResponseDto, 'Successfully received file detail')

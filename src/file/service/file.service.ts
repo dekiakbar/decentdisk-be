@@ -56,7 +56,7 @@ export class FileService {
     return result;
   }
 
-  async findAll(
+  async getFiles(
     pageOptionsDto: PageOptionsDto,
     userId: number = null,
   ): Promise<PageDto<FileResponseDto>> {
