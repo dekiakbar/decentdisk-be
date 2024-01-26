@@ -16,6 +16,9 @@ export class FileController {
 
     res.set({
       'Content-Type': fileMetaData.mimeType,
+      'Content-Length': fileMetaData.size,
+      'Accept-Ranges': 'bytes',
+      'Content-Disposition': `filename="${fileMetaData.name}"`
     });
 
     return new StreamableFile(file);
