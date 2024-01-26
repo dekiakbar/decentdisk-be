@@ -18,7 +18,7 @@ export class FileController {
       'Content-Type': fileMetaData.mimeType,
       'Content-Length': fileMetaData.size,
       'Accept-Ranges': 'bytes',
-      'Content-Disposition': `filename="${fileMetaData.name}"`
+      'Content-Disposition': `filename="${fileMetaData.name}"`,
     });
 
     return new StreamableFile(file);

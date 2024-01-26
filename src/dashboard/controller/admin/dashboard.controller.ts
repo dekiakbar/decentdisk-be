@@ -15,7 +15,7 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-    @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
   @AdminDashboardResponse()
   @Roles(RoleEnum.ADMIN)
   @Get()
