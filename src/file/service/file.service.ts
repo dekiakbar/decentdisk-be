@@ -46,7 +46,7 @@ export class FileService {
     const userFiles = await Promise.all(
       ipfsFiles.map(async (file) => {
         file.userId = user.id;
-        file.internalCid = this.generateInternalCid(file.mimeType);
+        file.internalCid = this.generateInternalCid();
         return file;
       }),
     );
@@ -190,17 +190,11 @@ export class FileService {
   }
 
   /**
-   * (Only use in nextJS frontend)
-   * Internal CID format : base64('mimeType')-randomString
-   * include mimeType in Internal CID to make frontend easy recognized the file,
-   * and know which media player should be rendered.
-   *
-   * @param mimeType mime type, i.e: vide/mp4
-   *
+   * Create Internal CID from random string.
+   * 
    * @returns {string}
    */
-  generateInternalCid(mimeType: string): string {
-    const separator = '-';
+  generateInternalCid(): string {
     const length = this.configService.get('INTERNAL_CID_LENGTH');
     const characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -213,10 +207,7 @@ export class FileService {
       );
     }
 
-    result =
-      Buffer.from(mimeType).toString('base64') + separator + randomString;
-
-    return result;
+    return randomString;
   }
 
   async stream(internalCid: string): Promise<FileViewResponseDto> {
