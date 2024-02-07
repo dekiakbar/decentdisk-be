@@ -1,12 +1,10 @@
 version: '3'
+# base docker config
 services:
   db:
-    hostname: "${POSTGRES_HOST}"
     image: postgres:14.5-bullseye
     env_file:
       - .env
-    ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
       - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
     restart: on-failure
@@ -17,10 +15,6 @@ services:
       - ipfs
     env_file:
       - .env
-    ports:
-      - "${PORT}:${PORT}"
-    command: >      
-      bash -c "npm run start:dev"
     working_dir: '/app'
     restart: on-failure
     volumes:
@@ -32,8 +26,10 @@ services:
     volumes:
       - ${IPFS_STAGING}:/export
       - ${IPFS_DATA}:/data/ipfs
-    ports:
-      - "${P2P_PORT}:4001"
-      - "${P2P_PORT}:4001/udp"
-      - "${GATEWAY_PORT}:8080"
-      - "${RPC_API}:5001"
+  node:
+    image: node:18.14.2-slim
+    env_file:
+      - .env
+    working_dir: '/app'
+    volumes:
+      - './:/app'

@@ -1,0 +1,18 @@
+version: '3'
+# docker config for development or local : ./start dev
+services:
+  db:
+    hostname: "${POSTGRES_HOST}"
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+  be:
+    ports:
+      - "${PORT}:${PORT}"
+    command: >      
+      bash -c "npm run start:dev"
+  ipfs:
+    ports:
+      - "${P2P_PORT}:4001"
+      - "${P2P_PORT}:4001/udp"
+      - "${GATEWAY_PORT}:8080"
+      - "${RPC_API}:5001"

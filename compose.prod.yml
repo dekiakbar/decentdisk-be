@@ -1,0 +1,18 @@
+version: '3'
+# docker config for production: ./start prod
+services:
+  db:
+    hostname: "${POSTGRES_HOST}"
+    ports:
+      - 127.0.0.1:${POSTGRES_PORT}:${POSTGRES_PORT}
+  be:
+    ports:
+      - "127.0.0.1:${PORT}:${PORT}"
+    command: >      
+      bash -c "npm run build && npm run start:prod"
+  ipfs:
+    ports:
+      - "${P2P_PORT}:4001"
+      - "${P2P_PORT}:4001/udp"
+      - "127.0.0.1:${GATEWAY_PORT}:8080"
+      - "127.0.0.1:${RPC_API}:5001"
