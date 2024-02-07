@@ -12,17 +12,17 @@ fi
 # https://docs.docker.com/compose/multiple-compose-files/merge/#example
 if [ "$1" = "prod" ]; then
     echo -e "${GREEN}${BOLD}Starting application in production mode...${RESET}"
-    docker compose -f compose.yml -f compose.prod.yml up -d
+    docker compose -f compose.yml -f compose.prod.yml up --build --force-recreate -d
 elif [ "$1" = "dev" ]; then
     echo -e "${GREEN}${BOLD}Starting application in development mode...${RESET}"
-    docker compose up -d db ipfs
+    docker compose up --build --force-recreate -d db ipfs
     docker compose up be
 elif [ "$1" = "install" ]; then
     echo -e "${GREEN}${BOLD}Installing npm package...${RESET}"
     # install node package
-    docker compose run --rm node npm install
+    docker compose run --rm --build --remove-orphans node npm install
     # remove stoped container and volume
-    docker compose rm -sfv node
+    # docker compose rm -sfv node
 else
     echo -e "${GREEN}${BOLD}Usage: $0 <prod | dev | install>${RESET}"
     exit 1

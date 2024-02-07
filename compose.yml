@@ -9,7 +9,9 @@ services:
       - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
     restart: on-failure
   be:
-    image: node:18.14.2-slim
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - db
       - ipfs
@@ -27,7 +29,9 @@ services:
       - ${IPFS_STAGING}:/export
       - ${IPFS_DATA}:/data/ipfs
   node:
-    image: node:18.14.2-slim
+    build:
+      context: .
+      dockerfile: Dockerfile
     env_file:
       - .env
     working_dir: '/app'
