@@ -3,7 +3,7 @@
 GREEN='\033[0;32m'
 BOLD='\033[1m'
 RESET='\033[0m'
-NETWORK_NAME="decendisk"
+NETWORK_NAME="decentdisk"
 
 if [ $# -ne 1 ]; then
     echo -e "${GREEN}${BOLD}Usage: $0 <prod | dev | install | stop>${RESET}"
@@ -31,7 +31,7 @@ if [ "$1" = "prod" ]; then
 elif [ "$1" = "dev" ]; then
     echo -e "${GREEN}${BOLD}Starting application in development mode...${RESET}"
     docker compose up --build --force-recreate -d db ipfs
-    docker compose up be
+    docker compose up --build --force-recreate be
 elif [ "$1" = "install" ]; then
     echo -e "${GREEN}${BOLD}Installing npm package...${RESET}"
     # install node package

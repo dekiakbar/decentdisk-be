@@ -10,7 +10,7 @@ services:
       - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
     restart: on-failure
     networks:
-      - decendisk
+      - decentdisk
   be:
     container_name: backend-api
     build:
@@ -26,7 +26,7 @@ services:
     volumes:
       - './:/app'
     networks:
-      - decendisk
+      - decentdisk
   ipfs:
     container_name: backend-ipfs
     image: ipfs/kubo:latest
@@ -36,7 +36,7 @@ services:
       - ${IPFS_STAGING}:/export
       - ${IPFS_DATA}:/data/ipfs
     networks:
-      - decendisk
+      - decentdisk
   node:
     container_name: backend-node
     build:
@@ -48,7 +48,7 @@ services:
     volumes:
       - './:/app'
     networks:
-      - decendisk
+      - decentdisk
 networks:
-  decendisk:
+  decentdisk:
     external: true
