@@ -2,10 +2,12 @@ version: '3'
 # docker config for production: ./start prod
 services:
   db:
+    restart: always
     hostname: "${POSTGRES_HOST}"
     ports:
       - 127.0.0.1:${POSTGRES_PORT}:${POSTGRES_PORT}
   be:
+    restart: always
     ports:
       - "127.0.0.1:${PORT}:${PORT}"
     command: >      
