@@ -2,13 +2,17 @@ version: '3'
 # base docker config
 services:
   db:
+    container_name: backend-db
     image: postgres:14.5-bullseye
     env_file:
       - .env
     volumes:
       - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
     restart: on-failure
+    networks:
+      - decendisk
   be:
+    container_name: backend-api
     build:
       context: .
       dockerfile: Dockerfile
@@ -21,14 +25,20 @@ services:
     restart: on-failure
     volumes:
       - './:/app'
+    networks:
+      - decendisk
   ipfs:
+    container_name: backend-ipfs
     image: ipfs/kubo:latest
     env_file:
       - .env
     volumes:
       - ${IPFS_STAGING}:/export
       - ${IPFS_DATA}:/data/ipfs
+    networks:
+      - decendisk
   node:
+    container_name: backend-node
     build:
       context: .
       dockerfile: Dockerfile
@@ -37,3 +47,8 @@ services:
     working_dir: '/app'
     volumes:
       - './:/app'
+    networks:
+      - decendisk
+networks:
+  decendisk:
+    external: true

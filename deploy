@@ -1,0 +1,47 @@
+#!/bin/bash
+
+GREEN='\033[0;32m'
+BOLD='\033[1m'
+RESET='\033[0m'
+NETWORK_NAME="decendisk"
+
+if [ $# -ne 1 ]; then
+    echo -e "${GREEN}${BOLD}Usage: $0 <prod | dev | install | stop>${RESET}"
+    exit 1
+fi
+
+create_docker_network() {
+    # Check if the network exists
+    if ! docker network inspect "$NETWORK_NAME" &>/dev/null; then
+        # Network does not exist, create it
+        docker network create "$NETWORK_NAME"
+        echo -e "Network $NETWORK_NAME created. \n"
+    else
+        echo -e "Network $NETWORK_NAME already exists. Skipped \n"
+    fi
+}
+
+# create docker network if no exist
+create_docker_network
+
+# https://docs.docker.com/compose/multiple-compose-files/merge/#example
+if [ "$1" = "prod" ]; then
+    echo -e "${GREEN}${BOLD}Starting application in production mode...${RESET}"
+    docker compose -f compose.yml -f compose.prod.yml up --build --force-recreate -d db ipfs be
+elif [ "$1" = "dev" ]; then
+    echo -e "${GREEN}${BOLD}Starting application in development mode...${RESET}"
+    docker compose up --build --force-recreate -d db ipfs
+    docker compose up be
+elif [ "$1" = "install" ]; then
+    echo -e "${GREEN}${BOLD}Installing npm package...${RESET}"
+    # install node package
+    docker compose run --rm --build --remove-orphans node npm install
+    # remove stoped container and volume
+    # docker compose rm -sfv node
+elif [ "$1" = "stop" ]; then
+    echo -e "${GREEN}${BOLD}Stopping application and remove container...${RESET}"
+    docker compose down
+else
+    echo -e "${GREEN}${BOLD}Usage: $0 <prod | dev | install | stop>${RESET}"
+    exit 1
+fi
