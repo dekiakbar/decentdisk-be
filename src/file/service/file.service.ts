@@ -191,7 +191,7 @@ export class FileService {
 
   /**
    * Create Internal CID from random string.
-   * 
+   *
    * @returns {string}
    */
   generateInternalCid(): string {
