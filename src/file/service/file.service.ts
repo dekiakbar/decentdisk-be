@@ -198,7 +198,7 @@ export class FileService {
     const length = this.configService.get('INTERNAL_CID_LENGTH');
     const characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
+    const result = '';
     let randomString = '';
 
     for (let i = 0; i < length; i++) {
