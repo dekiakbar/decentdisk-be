@@ -70,6 +70,10 @@ export class FileService {
       query.where = {
         userId: userId,
       };
+    }else{
+      query.include= {
+        model: UsersModel,
+      }
     }
 
     const { rows: files, count: itemCount } =
