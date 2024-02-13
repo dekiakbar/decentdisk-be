@@ -18,6 +18,7 @@ import { FindOptions } from 'sequelize';
 import { FileResponseDto } from '../dto/file-response.dto';
 import { ConfigService } from '@nestjs/config';
 import { FileViewResponseDto } from '../dto/file-view-response.dto';
+import { GatewayCheckerService } from 'src/gateway-checker/service/gateway-checker.service';
 @Injectable()
 export class FileService {
   constructor(
@@ -26,6 +27,7 @@ export class FileService {
     private ipfsService: IpfsService,
     private userService: UsersService,
     private configService: ConfigService,
+    private gatewayService: GatewayCheckerService,
   ) {}
 
   async upload(
@@ -70,18 +72,19 @@ export class FileService {
       query.where = {
         userId: userId,
       };
-    }else{
-      query.include= {
+    } else {
+      query.include = {
         model: UsersModel,
-      }
+      };
     }
 
     const { rows: files, count: itemCount } =
       await this.fileModel.findAndCountAll(query);
     const pageMetaDto = new PageMetaDto({ pageOptionsDto, itemCount });
-
+    const gateways = await this.gatewayService.getSortedByLatency();
     const filesObject = files.map((file) => {
-      const filesDto: FileResponseDto = file;
+      // const filesDto: FileResponseDto = file;
+      const filesDto = new FileResponseDto(file, gateways);
       return filesDto;
     });
 
@@ -153,7 +156,8 @@ export class FileService {
 
   async detail(id: number): Promise<FileResponseDto> {
     const file = await this.findOne(id);
-    return new FileResponseDto(file);
+    const gateways = await this.gatewayService.getSortedByLatency();
+    return new FileResponseDto(file, gateways);
   }
 
   async mineDetail(id: number, userId: number): Promise<FileMineResponseDto> {
@@ -162,8 +166,8 @@ export class FileService {
     }
 
     const file = await this.findOne(id, userId);
-
-    return new FileMineResponseDto(file);
+    const gateways = await this.gatewayService.getSortedByLatency();
+    return new FileMineResponseDto(file, gateways);
   }
 
   async remove(id: number): Promise<any> {
@@ -216,7 +220,12 @@ export class FileService {
   async stream(internalCid: string): Promise<FileViewResponseDto> {
     const fileData = await this.findOneByInternalCid(internalCid);
     const fileBuffer = await this.ipfsService.get(fileData.cid);
-    const fileMetaData = new FileViewResponseDto(fileData, fileBuffer);
+    const gateways = await this.gatewayService.getSortedByLatency();
+    const fileMetaData = new FileViewResponseDto(
+      fileData,
+      fileBuffer,
+      gateways,
+    );
 
     return fileMetaData;
   }
@@ -231,7 +240,12 @@ export class FileService {
 
     const fileData = await this.findOneByInternalCid(internalCid, userId);
     const fileBuffer = await this.ipfsService.get(fileData.cid);
-    const fileMetaData = new FileViewResponseDto(fileData, fileBuffer);
+    const gateways = await this.gatewayService.getSortedByLatency();
+    const fileMetaData = new FileViewResponseDto(
+      fileData,
+      fileBuffer,
+      gateways,
+    );
 
     return fileMetaData;
   }
