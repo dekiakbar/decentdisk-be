@@ -2,6 +2,7 @@ import {
   Column,
   DataType,
   Default,
+  Index,
   Model,
   NotEmpty,
   Table,
@@ -16,6 +17,7 @@ import { Status } from '../enum/status';
 export class GatewayCheckerModel extends Model {
   @NotEmpty
   @Column
+  @Index({ unique: true })
   gateway: string;
 
   @Column

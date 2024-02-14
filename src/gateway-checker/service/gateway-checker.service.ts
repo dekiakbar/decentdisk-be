@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { GatewayCheckerModel } from '../model/gateway-checker.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateGatewayDto } from '../dto/create-gateway.dto';
@@ -39,11 +39,26 @@ export class GatewayCheckerService {
   }
 
   async add(gatewayCheckerDto: CreateGatewayDto): Promise<GatewayCheckerModel> {
-    const gatewayChecker = await this.gateWayCheckerModel.create({
-      gateway: gatewayCheckerDto.gateway,
-      isEnabled: gatewayCheckerDto.isEnabled,
-    });
-    return gatewayChecker;
+    try{
+      const gatewayChecker = await this.gateWayCheckerModel.create({
+        gateway: gatewayCheckerDto.gateway,
+        isEnabled: gatewayCheckerDto.isEnabled,
+      });
+
+      return gatewayChecker;
+    }catch(error){
+      /**
+       * TODO: Handle all error type
+       */
+      if (error.name === 'SequelizeUniqueConstraintError') {
+        // Handle unique constraint errors
+        const errorMessage = `${error.errors[0].message}: ${error.errors[0].path}`;
+        throw new BadRequestException(errorMessage);
+      } else {
+        // Handle other types of errors
+        throw new InternalServerErrorException(error.message);
+      }
+    }
   }
 
   async getGateways(
