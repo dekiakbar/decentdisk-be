@@ -7,6 +7,9 @@ import { CommonModule } from './common/common.module';
 import { IpfsModule } from './ipfs/ipfs.module';
 import { FileModule } from './file/file.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { GatewayCheckerModule } from './gateway-checker/gateway-checker.module';
+import { ScheduleModule } from '@nestjs/schedule';
+// import { CronService } from './commom/service/cron.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +23,9 @@ import { DashboardModule } from './dashboard/dashboard.module';
     IpfsModule,
     FileModule,
     DashboardModule,
+    ScheduleModule.forRoot(),
+    GatewayCheckerModule,
   ],
+  // providers: [CronService],
 })
 export class AppModule {}

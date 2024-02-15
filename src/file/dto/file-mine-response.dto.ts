@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { FileModel } from '../model/files.model';
+import { GatewayResponseDto } from 'src/gateway-checker/dto/gateway-response.dto';
 
 export class FileMineResponseDto {
   @ApiProperty()
@@ -26,7 +27,10 @@ export class FileMineResponseDto {
   @ApiProperty()
   updatedAt?: string;
 
-  constructor(file: FileModel) {
+  @ApiProperty()
+  gateways: string[] = [];
+
+  constructor(file: FileModel, gateways: GatewayResponseDto[]) {
     this.id = file.id;
     this.userId = file.userId;
     this.internalCid = file.internalCid;
@@ -35,5 +39,10 @@ export class FileMineResponseDto {
     this.mimeType = file.mimeType;
     this.createdAt = file.createdAt;
     this.updatedAt = file.updatedAt;
+
+    gateways.map((gateway) => {
+      const url = `${gateway.gateway}/${file.cid}`;
+      this.gateways.push(url);
+    });
   }
 }

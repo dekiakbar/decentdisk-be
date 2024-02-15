@@ -8,6 +8,7 @@ import { FileModel } from './model/files.model';
 import { UsersModule } from 'src/user/users.module';
 import { FileController as AdminFileController } from './controller/admin/file.controller';
 import { FileController } from './controller/public/file.controller';
+import { GatewayCheckerModule } from 'src/gateway-checker/gateway-checker.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { FileController } from './controller/public/file.controller';
     DatabaseModule,
     SequelizeModule.forFeature([FileModel]),
     UsersModule,
+    GatewayCheckerModule,
   ],
   controllers: [AdminFileController, UserFileController, FileController],
   providers: [FileService],
