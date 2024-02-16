@@ -23,6 +23,7 @@ import { FileMineResponseDto } from 'src/file/dto/file-mine-response.dto';
 import { ApiSuccessResponse } from 'src/common/decorator/api-success-response';
 import { Stream } from 'stream';
 import { Response } from 'express';
+import { FileValidationPipePipe } from 'src/file/pipe/file-validation-pipe.pipe';
 
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('File')
@@ -35,7 +36,7 @@ export class FileController {
   @Post()
   @UseInterceptors(FilesInterceptor('files'))
   async upload(
-    @UploadedFiles() files: Array<Express.Multer.File>,
+    @UploadedFiles(FileValidationPipePipe) files: Array<Express.Multer.File>,
     @Request() request,
   ) {
     return await this.fileService.upload(files, request.user.id);
