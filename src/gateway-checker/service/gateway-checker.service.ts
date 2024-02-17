@@ -96,6 +96,10 @@ export class GatewayCheckerService {
       },
     });
 
+    if (!gatewayChecker) {
+      throw new BadRequestException('Data not found');
+    }
+
     return gatewayChecker;
   }
 
